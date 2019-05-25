@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 public class MapaVictor {
 	public static void main(String[] args) throws IOException {
-		Map<String, Integer> ipMap = new HashMap<>();
 		Map<String, Map<String, Integer>> usuariosMap = new HashMap<>();
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		String ip = null;
@@ -33,109 +32,110 @@ public class MapaVictor {
 					try {
 
 						token = s.skip("fin|FIN|IP\\s*=\\(").match().group();
-						System.out.println("0");
 						if (token.equalsIgnoreCase("fin")) {
-							fin=true;
-							fin2=true;
-							
+							fin = true;
+							fin2 = true;
+
 						} else {
 							estado = 1;
-							fin2= true; 
+							fin2 = true;
 						}
 					} catch (NoSuchElementException e) {
 						System.out.println("Se esperaba 'fin' o 'IP=('");
-						fin2=true;
+						fin2 = true;
 						break;
 					}
 
 				case 1:
 					try {
-						ip = s.skip(
-								"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)")
+						ip = s.skip("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)")
 								.match().group();
-						System.out.println("1");
 						estado = 2;
 					} catch (NoSuchElementException e) {
 						System.out.println("Se esperaba una IP válida");
-						estado =0 ;
-						fin2=true;
+						estado = 0;
+						fin2 = true;
 						break;
 					}
 
 				case 2:
 					try {
 						token = s.skip("\\)\\s*mensaje\\=\\(.*\\)\\s*usuario\\=\\(").match().group();
-						mens++;
 						estado = 3;
-						System.out.println("2");
 					} catch (NoSuchElementException e) {
 						System.out.println("Se esperaba 'mensaje=' y 'usuario='");
-						estado =0 ;
-						fin2=true;
+						estado = 0;
+						fin2 = true;
 						break;
 					}
 
 				case 3:
-					
+
 					try {
 						usuario = s.skip("\\p{L}+").match().group();
 						estado = 4;
-						System.out.println("3");
 					} catch (NoSuchElementException e) {
 						System.out.println("Se esperaba nombre el nombre del usuario");
-						estado =0 ;
-						fin2=true;
+						estado = 0;
+						fin2 = true;
 						break;
 					}
 
 				case 4:
 					try {
 						token = s.skip("\\)").match().group();
-						ipMap.put(ip, mens);
-						usuariosMap.put(usuario, ipMap);
-						System.out.println(usuariosMap.get(usuario));
-						estado=0;
-						token=null;
-						s.reset();
-						fin2 = true;
-					
+						if (usuariosMap.containsKey(usuario)) {
+							if (usuariosMap.get(usuario).containsKey(ip)) {
+								usuariosMap.get(usuario).replace(ip, usuariosMap.get(usuario).get(ip), usuariosMap.get(usuario).get(ip) + 1);
+								System.out.println("Nuevo mensaje para la IP " + ip + " del Usuario " + usuario);
+								estado = 0;
+								token = null;
+								s.reset();
+								fin2 = true;
+							} else {
+								usuariosMap.get(usuario).put(ip, 1);
+								System.out.println("Nueva IP " + ip + " del Usuario " + usuario);
+								estado = 0;
+								token = null;
+								s.reset();
+								fin2 = true;
+							}
+						} else {
+							mens = 1;
+							usuariosMap.put(usuario, new HashMap<>());
+							usuariosMap.get(usuario).put(ip, mens);
+							System.out.println("Nuevo Usuario: " + usuario + " con la IP " + ip);
+							estado = 0;
+							token = null;
+							s.reset();
+							fin2 = true;
+						}
+
 					} catch (NoSuchElementException e) {
 						System.out.println("se esperaba ')'");
-						estado =0 ;
-						fin2=true;
+						estado = 0;
+						fin2 = true;
 						break;
-						
 					}
 
 				}
 
 			} while (!fin2);
+			s.close();
 		} while (!fin);
-		
-		
-		
-		for (Entry<String, Map<String, Integer>> jugador : usuariosMap.entrySet()){
+
+//		for (Map.Entry<String, Map<String, Integer>> user : usuariosMap.entrySet()) {
+//			System.out.println("clave=" + user.getKey() + ", valor=" + user.getValue());
+////			for (Map.Entry<String, Integer> entry : ipMap.entrySet()) {
+//				System.out.println("clave=" + entry.getKey() + ", valor=" + entry.getValue());
+//			}
+//		}
+
+		for (Entry<String, Map<String, Integer>> jugador : usuariosMap.entrySet()) {
 			String clave = jugador.getKey();
-			Map<String, Integer> valor = jugador.getValue();
-			System.out.println(clave+"  ->  "+ usuariosMap.get(clave));
+			System.out.println(clave + "  ->  " + usuariosMap.get(clave));
 		}
-		
-		//for (Entry<String, Map<String, Integer>> e: usuariosMap.entrySet()) {
-			
-	//			System.out.println( e + usuariosMap.values() );
-	//	}
-			
-			// System.out.println(usuariosMap.get(usuario));
-		
-
-		// System.out.println("FIN DEL PROGRAMA");
-		
-		
-		//System.out.println(usuariosMap.get(usuario) + usuario);
-
 	}
-
 }
-
 
 //IP=(192.168.8.8) mensaje=(hola mundo) usuario=(bocheti)
