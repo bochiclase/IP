@@ -40,7 +40,7 @@ public class MapaVictor {
 							
 						} else {
 							estado = 1;
-							fin2= true;
+							fin2= true; 
 						}
 					} catch (NoSuchElementException e) {
 						System.out.println("Se esperaba 'fin' o 'IP=('");
