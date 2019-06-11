@@ -124,12 +124,7 @@ public class MapaVictor {
 			s.close();
 		} while (!fin);
 
-//		for (Map.Entry<String, Map<String, Integer>> user : usuariosMap.entrySet()) {
-//			System.out.println("clave=" + user.getKey() + ", valor=" + user.getValue());
-////			for (Map.Entry<String, Integer> entry : ipMap.entrySet()) {
-//				System.out.println("clave=" + entry.getKey() + ", valor=" + entry.getValue());
-//			}
-//		}
+
 
 		for (Entry<String, Map<String, Integer>> jugador : usuariosMap.entrySet()) {
 			String clave = jugador.getKey();
