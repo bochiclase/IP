@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class MapaVictor {
+public class Main {
 	public static void main(String[] args) throws IOException {
 		Map<String, Map<String, Integer>> usuariosMap = new HashMap<>();
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -23,6 +23,8 @@ public class MapaVictor {
 		int estado = 0;
 		do {
 			System.out.println("Introducir los datos:");
+			System.out.println("Formato:");
+			System.out.println("IP=(192.168.8.8) mensaje=(hola mundo) usuario=(bocheti)");
 			System.out.print("> ");
 			Scanner s = new Scanner(in.readLine());
 			do {
@@ -35,6 +37,7 @@ public class MapaVictor {
 						if (token.equalsIgnoreCase("fin")) {
 							fin = true;
 							fin2 = true;
+							break;
 
 						} else {
 							estado = 1;
